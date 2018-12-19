@@ -42,13 +42,17 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			break;
 		case ID_ACCELERATOR40009:
 		case ID_FILE_OPEN:
-			if (g_myWND.OpenFile(L"葛电 颇老\0*.*\0") == TRUE)
+			if (g_myWND.OpenFileDlg(L"葛电 颇老\0*.*\0") == TRUE)
 			{
-				// use ofn.lpstrFile
+				g_myWND.OpenFileText(g_myWND.GetDlgFileName());
 			}
 			break;
 		case ID_ACCELERATOR40013:
 		case ID_FILE_SAVE:
+			if (g_myWND.SaveFileDlg(L"葛电 颇老\0*.*\0") == TRUE)
+			{
+				g_myWND.SaveFileText(g_myWND.GetDlgFileName());
+			}
 			break;
 		case ID_ACCELERATOR40011:
 		case ID_HELP_INFO:

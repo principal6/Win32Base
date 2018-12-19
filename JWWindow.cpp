@@ -105,20 +105,63 @@ HWND JWWindow::AddControl(LPCWSTR ClassName, HWND hParentWnd, DWORD Style, int X
 	return temphWnd;
 }
 
-BOOL JWWindow::OpenFile(LPCWSTR Filter) {
+int JWWindow::SetDlgBase() {
 	ZeroMemory(&m_OFN, sizeof(m_OFN));
 	m_OFN.lStructSize = sizeof(m_OFN);
 	m_OFN.hwndOwner = m_hWndMain;
-	m_OFN.lpstrFile = m_szFile;
-	m_OFN.nMaxFile = sizeof(m_szFile);
-	m_OFN.lpstrFilter = Filter;
+	m_OFN.lpstrFile = m_FileName;
+	m_OFN.nMaxFile = sizeof(m_FileName);
 	m_OFN.nFilterIndex = 1;
 	m_OFN.lpstrFileTitle = NULL;
 	m_OFN.nMaxFileTitle = 0;
 	m_OFN.lpstrInitialDir = NULL;
 	m_OFN.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
+	return 0;
+}
+
+BOOL JWWindow::OpenFileDlg(LPCWSTR Filter) {
+	SetDlgBase();
+	m_OFN.lpstrFilter = Filter;
+
 	return GetOpenFileName(&m_OFN);
+}
+
+BOOL JWWindow::SaveFileDlg(LPCWSTR Filter) {
+	SetDlgBase();
+	m_OFN.lpstrFilter = Filter;
+
+	return GetSaveFileName(&m_OFN);
+}
+
+int JWWindow::OpenFileText(std::wstring FileName) {
+	std::wifstream filein;
+	filein.open(FileName, std::wifstream::in);
+	if (!filein.is_open()) return -1;
+	
+	wchar_t tempText[FILELINELEN];
+	m_FileText.clear();
+	while (!filein.eof()) {
+		filein.getline(tempText, FILELINELEN);
+		m_FileText += tempText;
+		m_FileText += '\n';
+	}
+	m_FileText = m_FileText.substr(0, m_FileText.size() - 1);
+
+	return 0;
+}
+
+int JWWindow::SaveFileText(std::wstring FileName) {
+	std::wofstream fileout;
+	fileout.open(FileName, std::wofstream::out);
+	if (!fileout.is_open()) return -1;
+
+	fileout.write(m_FileText.c_str(), m_FileText.size());
+	return 0;
+}
+
+std::wstring JWWindow::GetDlgFileName() {
+	return m_FileName;
 }
 
 LRESULT CALLBACK JWWindow::BaseProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam) {
