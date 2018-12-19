@@ -34,6 +34,8 @@ public:
 
 	HWND JWWindow::AddScrollbarH(HWND hParentWnd, int Min, int Max);
 	HWND JWWindow::AddScrollbarV(HWND hParentWnd, int Min, int Max);
+	int JWWindow::MoveScrollbarH(HWND hParentWnd, HWND hWnd);
+	int JWWindow::MoveScrollbarV(HWND hParentWnd, HWND hWnd);
 
 	BOOL JWWindow::OpenFileDlg(LPCWSTR Filter);
 	int JWWindow::OpenFileText(std::wstring FileName);

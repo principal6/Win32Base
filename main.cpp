@@ -8,6 +8,7 @@ HWND g_hScrLH;
 HWND g_hScrLV;
 HWND g_hScrRH;
 HWND g_hScrRV;
+int g_WndSepX = 200;
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
 LRESULT CALLBACK WndProcL(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam);
@@ -18,8 +19,8 @@ int main() {
 	g_hWnd = g_myWND.Create(L"Program", 50, 50, 800, 600, RGB(255, 255, 255), WndProc, WS_OVERLAPPEDWINDOW);
 	RECT tempRect;
 	GetClientRect(g_hWnd, &tempRect);
-	g_hChildL = g_myWND.AddChild(g_hWnd, L"ChL", 0, 0, 200, tempRect.bottom, RGB(230, 230, 230), WndProcL);
-	g_hChildR = g_myWND.AddChild(g_hWnd, L"ChR", 200, 0, tempRect.right - 200, tempRect.bottom, RGB(150, 150, 150), WndProcR);
+	g_hChildL = g_myWND.AddChild(g_hWnd, L"ChL", 0, 0, g_WndSepX, tempRect.bottom, RGB(230, 230, 230), WndProcL);
+	g_hChildR = g_myWND.AddChild(g_hWnd, L"ChR", g_WndSepX, 0, tempRect.right - g_WndSepX, tempRect.bottom, RGB(150, 150, 150), WndProcR);
 	g_hScrLH = g_myWND.AddScrollbarH(g_hChildL, 0, 10);
 	g_hScrLV = g_myWND.AddScrollbarV(g_hChildL, 0, 10);
 	g_hScrRH = g_myWND.AddScrollbarH(g_hChildR, 0, 10);
@@ -30,6 +31,8 @@ int main() {
 LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 {
 	g_myWND.BaseProc(hWnd, Message, wParam, lParam);
+
+	RECT tRect;
 	
 	switch (Message)
 	{
@@ -56,9 +59,18 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT Message, WPARAM wParam, LPARAM lParam)
 			break;
 		case ID_ACCELERATOR40011:
 		case ID_HELP_INFO:
-			MessageBox(hWnd, TEXT("Menu 1"), TEXT("Menu1 Caption"), MB_OK);
+			MessageBox(hWnd, TEXT("윈도우즈 앱 개발을 위한 기반 앱입니다."), TEXT("정보"), MB_OK);
 			break;
 		}
+		break;
+	case WM_SIZE:
+		GetClientRect(hWnd, &tRect);
+		MoveWindow(g_hChildR, g_WndSepX, 0, tRect.right - g_WndSepX, tRect.bottom, TRUE);
+		MoveWindow(g_hChildL, 0, 0, g_WndSepX, tRect.bottom, TRUE);
+		g_myWND.MoveScrollbarH(g_hChildL, g_hScrLH);
+		g_myWND.MoveScrollbarV(g_hChildL, g_hScrLV);
+		g_myWND.MoveScrollbarH(g_hChildR, g_hScrRH);
+		g_myWND.MoveScrollbarV(g_hChildR, g_hScrRV);
 		break;
 	}
 	return(DefWindowProc(hWnd, Message, wParam, lParam));

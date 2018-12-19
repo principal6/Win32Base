@@ -69,7 +69,7 @@ int JWWindow::Run(HWND hMainWnd) {
 	return m_MSG.wParam;
 }
 
-HWND JWWindow::AddScrollbarH(HWND hParentWnd, int Min, int Max) {
+int JWWindow::MoveScrollbarH(HWND hParentWnd, HWND hWnd) {
 	RECT tempRect;
 	GetClientRect(hParentWnd, &tempRect);
 
@@ -79,12 +79,11 @@ HWND JWWindow::AddScrollbarH(HWND hParentWnd, int Min, int Max) {
 	w = tempRect.right - 20;
 	h = 20;
 
-	HWND temphWnd = AddControl(L"scrollbar", hParentWnd, SBS_HORZ, x, y, w, h);
-	SetScrollRange(temphWnd, SB_CTL, Min, Max, TRUE);
-	return temphWnd;
+	MoveWindow(hWnd, x, y, w, h, TRUE);
+	return 0;
 }
 
-HWND JWWindow::AddScrollbarV(HWND hParentWnd, int Min, int Max) {
+int JWWindow::MoveScrollbarV(HWND hParentWnd, HWND hWnd) {
 	RECT tempRect;
 	GetClientRect(hParentWnd, &tempRect);
 
@@ -94,8 +93,21 @@ HWND JWWindow::AddScrollbarV(HWND hParentWnd, int Min, int Max) {
 	w = 20;
 	h = tempRect.bottom - 20;
 
-	HWND temphWnd = AddControl(L"scrollbar", hParentWnd, SBS_VERT, x, y, w, h);
+	MoveWindow(hWnd, x, y, w, h, TRUE);
+	return 0;
+}
+
+HWND JWWindow::AddScrollbarH(HWND hParentWnd, int Min, int Max) {
+	HWND temphWnd = AddControl(L"scrollbar", hParentWnd, SBS_HORZ, 0, 0, 0, 0);
 	SetScrollRange(temphWnd, SB_CTL, Min, Max, TRUE);
+	MoveScrollbarH(hParentWnd, temphWnd);
+	return temphWnd;
+}
+
+HWND JWWindow::AddScrollbarV(HWND hParentWnd, int Min, int Max) {
+	HWND temphWnd = AddControl(L"scrollbar", hParentWnd, SBS_VERT, 0, 0, 0, 0);
+	SetScrollRange(temphWnd, SB_CTL, Min, Max, TRUE);
+	MoveScrollbarV(hParentWnd, temphWnd);
 	return temphWnd;
 }
 
